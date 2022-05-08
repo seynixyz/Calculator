@@ -2,139 +2,149 @@ const operation = document.querySelector('.operation');
 const input = document.querySelector('.input');
 const clear = document.querySelector('.clear');
 const del = document.querySelector('.delete');
-const keys = document.querySelector('.keys');
-const keystroke = document.querySelectorAll('.number');
+const numberKey = document.querySelectorAll('.number');
 const opeKey = document.querySelectorAll('.ope');
+const equalKey = document.querySelectorAll('.equal');
 
-let displayValue = '0';
+let where = ''; // Allow to know which input was previously done
+let whereInNumber = '';
+let result = '';
+let displayValue = '';
 let oneDot = false;
-let ope1 = 0;
-let ope2 = 0;
-let addResult;
+let x1 = '0';
+let x2 = '0';
 let opeContainer = '';
-let opeResetContainer = '';
 let stop = '';
-let reset = '';
+let noResetFlag = false;
 
+// Listen to clear and delete
 clear.addEventListener('click', clc);
 del.addEventListener('click', delNum);
-keystroke.forEach(div => div.addEventListener('click', pushNumber));
-opeKey.forEach(div => div.addEventListener('click', numberOperation));
 
-function numberOperation() {
-    if (this.id == '+') {
-        if (ope1 == 0) {
-            ope1 = displayValue;
-            operation.textContent = ope1 + this.id;
-        }
-        
-        opeContainer = '+';
-        if ((opeResetContainer == '*') ||
-            (opeResetContainer == '-') ||
-            (opeResetContainer == '/')) {
-                reset = '';
-                ope1 = input.textContent;
-                ope2 = ope1;
-                operation.textContent = ope1 + this.id;
-        }
-        where = 'plus';
-    }
-    if (this.id == '*') {
-        if (ope1 == 0) {
-            ope1 = displayValue;
-            operation.textContent = ope1 + this.id;
-        }
-        
-        opeContainer = '*';
-        if ((opeResetContainer == '+') ||
-            (opeResetContainer == '-') ||
-            (opeResetContainer == '/')) {
-                reset = '';
-                ope1 = input.textContent;
-                ope2 = ope1;
-                operation.textContent = ope1 + this.id;
-        }
-        where = 'mul';
-    }
-
-    if ((opeContainer == '+') || 
-        (opeContainer == '-') ||
-        (opeContainer == '*') || 
-        (opeContainer == '/') ){
-        ope2 = input.textContent;
-        console.log(ope2);
-    }
-
-    if (this.id == '=') {
-        if (reset == 'noreset') {
-            ope1=addResult;
-            opeContainer = opeResetContainer;
-        }
-        console.log(ope2);
-        if (opeContainer == '+') {
-            addResult=add(parseFloat(ope1),parseFloat(ope2))
-            operation.textContent = ope1 + opeContainer + ope2;
-            input.textContent = addResult;
-        }
-        if (opeContainer == '*') {
-            addResult=multiply(parseFloat(ope1),parseFloat(ope2))
-            operation.textContent = ope1 + opeContainer + ope2;
-            input.textContent = addResult;
-        }
-
-        opeResetContainer= opeContainer;
-
-        opeContainer = 'clean';
-        reset = 'noreset';
-        where = 'equal';
-    }
-}
+// Listen to which key has been pressed and execute a function accordingly 
+numberKey.forEach(div => div.addEventListener('click', numberFunction));
+opeKey.forEach(div => div.addEventListener('click', operatorFunction));
+equalKey.forEach(div => div.addEventListener('click', resultFunction));
 
 
 
-function pushNumber() {
-    console.log('yo');
-    if (opeContainer != '' && stop != 'stop') {
+
+
+
+//------------Click a number function-------------
+
+
+function numberFunction() {
+    if (where == 'operator') {
         delNum();
-        oneDot=false;  // oneDot allow one dot per number
-        stop = 'stop'; // stop prevent the oneDot boolean to be spammed
+        oneDot=false; // Reset oneDot constraint
+        where = 'number';
+        whereInNumber = 'operator';
     }
 
-
-    /*  'where' is needed in the case for which we click an operator after a having clicked equal.
-        If a number is entered after the operator so : '=' '*' then 'number' we do not want to clean
-        We only want to clean went a number is entered after '=' */
-    if ((opeContainer == 'clean') && (where= 'equal')) {  
+    if (where == 'equal') {  
         clc();
-        opeContainer = '';
-        opeResetContainer='';
-        stop = '';
-        reset = '';
-        ope1 = 0;
-        ope2 = 0;
     }
 
-    if (((this.id) == '1' || 
-        (this.id) == '2' ||
-        (this.id) == '3' ||
-        (this.id) == '4' ||
-        (this.id) == '5' ||
-        (this.id) == '6' ||
-        (this.id) == '7' ||
-        (this.id) == '8' ||
-        (this.id) == '9' ||
-        (this.id) == '0' )){
-        if (input.textContent == '0') {
-            displayValue = '';
+    if (where == 'number' || where == '') {  
+        /* Dot case */
+        if (this.id == '.' && oneDot == false) {
+            input.textContent = displayValue + this.id;
+            displayValue = input.textContent;
+            oneDot = true;
         }
-        input.textContent = displayValue + this.id;
-    } 
-    if (this.id == '.' && oneDot == false) {
-        input.textContent = displayValue+this.id;
-        oneDot = true;
+
+        /* Number case*/
+        if (this.id != '.') {
+            input.textContent = displayValue + this.id;
+            displayValue = input.textContent;
+        }
+
+
+        // x1 take the value of the concatenate input
+        if (whereInNumber != 'operator') {
+            x1 = displayValue;
+            if (whereInNumber == '') {
+                x2 = displayValue;  // copy first value in case : number->ope->equal
+                whereInNumber = 'noSpam';
+            }
+            
+            
+        }
+        
+        // operator has been pressed before so x1 doesn't change and x2 become input
+        if (whereInNumber == 'operator') {
+            x2 = displayValue;
+        }
+        
+        
     }
-    displayValue = input.textContent;
+    where = 'number';
 }
+
+
+
+//------------Click an operator function-------------
+
+function operatorFunction() {
+
+    if (where == 'number' || where == '') {
+        operation.textContent = x1 + this.id;
+        opeContainer = this.id;
+    }
+
+    if (where == 'equal') {
+        x1 = result;
+        x2 = result;
+        operation.textContent = x1 + this.id;
+        opeContainer = this.id;
+    }
+
+    where = 'operator';
+}
+
+
+
+
+
+//------------Click an equal function-------------
+function resultFunction() {
+    // Allow to spam equal
+    if (noResetFlag == true) {
+        x1=result;
+    }
+    // Display result
+    if (opeContainer == '+') {
+        result=add(parseFloat(x1),parseFloat(x2))
+        operation.textContent = x1 + opeContainer + x2;
+        input.textContent = result;
+    }
+    if (opeContainer == '*') {
+        result=multiply(parseFloat(x1),parseFloat(x2))
+        operation.textContent = x1 + opeContainer + x2;
+        input.textContent = result;
+    }
+    if (opeContainer == '-') {
+        result=subtract(parseFloat(x1),parseFloat(x2))
+        operation.textContent = x1 + opeContainer + x2;
+        input.textContent = result;
+    }
+    if (opeContainer == '/') {
+        result=divide(parseFloat(x1),parseFloat(x2))
+        operation.textContent = x1 + opeContainer + x2;
+        input.textContent = result;
+    }
+    if (result == '42') {
+        operation.textContent = 'the real answer';
+    }
+    noResetFlag = true;
+    where = 'equal';
+}
+
+
+
+//------------Clear, Delete, Operator functions-------------
+
 
 function add(a,b) {
     return a+b;
@@ -169,13 +179,22 @@ function operate(operator,a,b) {
 
 function clc() {
     displayValue = '';
+    where = '';
     input.textContent = 0;
     operation.textContent = '';
     oneDot = false;
+    opeContainer = '';
+    opeResetContainer='';
+    stop = '';
+    noResetFlag = false;
+    x1 = '0';
+    x2 = '0';
+    whereInNumber = '';
+    result = '';
 }
 
 function delNum() {
-    displayValue = 0;
+    displayValue = '';
     input.textContent = 0;
     oneDot = false;
 }
