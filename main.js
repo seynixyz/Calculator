@@ -12,12 +12,12 @@ let ope1 = 0;
 let ope2 = 0;
 let addResult;
 let opeContainer = '';
+let opeResetContainer = '';
 let stop = '';
+let reset = '';
 
 clear.addEventListener('click', clc);
 del.addEventListener('click', delNum);
-
-
 keystroke.forEach(div => div.addEventListener('click', pushNumber));
 opeKey.forEach(div => div.addEventListener('click', numberOperation));
 
@@ -25,46 +25,93 @@ function numberOperation() {
     if (this.id == '+') {
         if (ope1 == 0) {
             ope1 = displayValue;
-            
+            operation.textContent = ope1 + this.id;
         }
         
-        operation.textContent = ope1 + this.id;
         opeContainer = '+';
+        if ((opeResetContainer == '*') ||
+            (opeResetContainer == '-') ||
+            (opeResetContainer == '/')) {
+                reset = '';
+                ope1 = input.textContent;
+                ope2 = ope1;
+                operation.textContent = ope1 + this.id;
+        }
+        where = 'plus';
+    }
+    if (this.id == '*') {
+        if (ope1 == 0) {
+            ope1 = displayValue;
+            operation.textContent = ope1 + this.id;
+        }
+        
+        opeContainer = '*';
+        if ((opeResetContainer == '+') ||
+            (opeResetContainer == '-') ||
+            (opeResetContainer == '/')) {
+                reset = '';
+                ope1 = input.textContent;
+                ope2 = ope1;
+                operation.textContent = ope1 + this.id;
+        }
+        where = 'mul';
     }
 
-
-    if (opeContainer != '') {
-        ope2 = displayValue;
-        console.log('ope2=', ope2);
+    if ((opeContainer == '+') || 
+        (opeContainer == '-') ||
+        (opeContainer == '*') || 
+        (opeContainer == '/') ){
+        ope2 = input.textContent;
+        console.log(ope2);
     }
 
     if (this.id == '=') {
+        if (reset == 'noreset') {
+            ope1=addResult;
+            opeContainer = opeResetContainer;
+        }
+        console.log(ope2);
         if (opeContainer == '+') {
             addResult=add(parseFloat(ope1),parseFloat(ope2))
-            console.log(ope2);
-            operation.textContent = operation.textContent + ope2;
+            operation.textContent = ope1 + opeContainer + ope2;
             input.textContent = addResult;
         }
+        if (opeContainer == '*') {
+            addResult=multiply(parseFloat(ope1),parseFloat(ope2))
+            operation.textContent = ope1 + opeContainer + ope2;
+            input.textContent = addResult;
+        }
+
+        opeResetContainer= opeContainer;
+
         opeContainer = 'clean';
-        ope1 = 0;
-        ope2 = 0;
+        reset = 'noreset';
+        where = 'equal';
     }
-    console.log(opeContainer);
 }
 
 
 
 function pushNumber() {
-
+    console.log('yo');
     if (opeContainer != '' && stop != 'stop') {
         delNum();
-        oneDot=false;
-        stop = 'stop';
+        oneDot=false;  // oneDot allow one dot per number
+        stop = 'stop'; // stop prevent the oneDot boolean to be spammed
     }
-    if (opeContainer == 'clean') {
+
+
+    /*  'where' is needed in the case for which we click an operator after a having clicked equal.
+        If a number is entered after the operator so : '=' '*' then 'number' we do not want to clean
+        We only want to clean went a number is entered after '=' */
+    if ((opeContainer == 'clean') && (where= 'equal')) {  
         clc();
         opeContainer = '';
+        opeResetContainer='';
         stop = '';
+        reset = '';
+        ope1 = 0;
+        ope2 = 0;
     }
 
     if (((this.id) == '1' || 
@@ -86,7 +133,6 @@ function pushNumber() {
         input.textContent = displayValue+this.id;
         oneDot = true;
     }
-
     displayValue = input.textContent;
 }
 
