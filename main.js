@@ -8,14 +8,15 @@ const equalKey = document.querySelectorAll('.equal');
 
 let where = ''; // Allow to know which input was previously done
 let whereInNumber = '';
+let whereInEqual = '';
 let result = '';
 let displayValue = '';
 let oneDot = false;
+let dontSpam = false;
 let x1 = '0';
 let x2 = '0';
 let opeContainer = '';
 let stop = '';
-let noResetFlag = false;
 
 // Listen to clear and delete
 clear.addEventListener('click', clc);
@@ -100,7 +101,15 @@ function operatorFunction() {
         opeContainer = this.id;
     }
 
+    if (where == 'operator') {
+        x1 = input.textContent;
+        x2 = input.textContent;
+        operation.textContent = x1 + this.id;
+        opeContainer = this.id;
+    }
+
     where = 'operator';
+    dontSpam = false;
 }
 
 
@@ -110,34 +119,28 @@ function operatorFunction() {
 //------------Click an equal function-------------
 function resultFunction() {
     // Allow to spam equal
-    if (noResetFlag == true) {
+    if (where == 'equal') {
         x1=result;
     }
-    // Display result
-    if (opeContainer == '+') {
-        result=add(parseFloat(x1),parseFloat(x2))
+    if ((operation.textContent != '') && (dontSpam == false)){
+        // Display result
+        result = operate(opeContainer,parseFloat(x1),parseFloat(x2));
         operation.textContent = x1 + opeContainer + x2;
         input.textContent = result;
     }
-    if (opeContainer == '*') {
-        result=multiply(parseFloat(x1),parseFloat(x2))
-        operation.textContent = x1 + opeContainer + x2;
-        input.textContent = result;
+    if ((where == 'number' || where == '') && (operation.textContent == '')){
+        opeContainer = this.id;
+        console.log('what');
+        operation.textContent = x1 + opeContainer;
+        input.textContent = x1;
+        dontSpam = true;
     }
-    if (opeContainer == '-') {
-        result=subtract(parseFloat(x1),parseFloat(x2))
-        operation.textContent = x1 + opeContainer + x2;
-        input.textContent = result;
-    }
-    if (opeContainer == '/') {
-        result=divide(parseFloat(x1),parseFloat(x2))
-        operation.textContent = x1 + opeContainer + x2;
-        input.textContent = result;
-    }
+
+    // 42
     if (result == '42') {
         operation.textContent = 'the real answer';
     }
-    noResetFlag = true;
+
     where = 'equal';
 }
 
@@ -186,10 +189,10 @@ function clc() {
     opeContainer = '';
     opeResetContainer='';
     stop = '';
-    noResetFlag = false;
     x1 = '0';
     x2 = '0';
     whereInNumber = '';
+    whereInEqual = '';
     result = '';
 }
 
