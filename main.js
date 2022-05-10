@@ -8,7 +8,6 @@ const equalKey = document.querySelectorAll('.equal');
 
 let where = ''; // Allow to know which input was previously done
 let whereInNumber = '';
-let whereInEqual = '';
 let result = '';
 let displayValue = '';
 let oneDot = false;
@@ -29,11 +28,7 @@ equalKey.forEach(div => div.addEventListener('click', resultFunction));
 
 
 
-
-
-
 //------------Click a number function-------------
-
 
 function numberFunction() {
     if (where == 'operator') {
@@ -114,9 +109,8 @@ function operatorFunction() {
 
 
 
-
-
 //------------Click an equal function-------------
+
 function resultFunction() {
     // Allow to spam equal
     if (where == 'equal') {
@@ -130,15 +124,22 @@ function resultFunction() {
     }
     if ((where == 'number' || where == '') && (operation.textContent == '')){
         opeContainer = this.id;
-        console.log('what');
         operation.textContent = x1 + opeContainer;
         input.textContent = x1;
         dontSpam = true;
     }
 
-    // 42
+    // Easter eggs
     if (result == '42') {
         operation.textContent = 'the real answer';
+    }
+
+    if (result == '69') {
+        operation.textContent = 'sex';
+    }
+
+    if (result == '420') {
+        operation.textContent = 'is this legal ?';
     }
 
     where = 'equal';
@@ -192,7 +193,6 @@ function clc() {
     x1 = '0';
     x2 = '0';
     whereInNumber = '';
-    whereInEqual = '';
     result = '';
 }
 
