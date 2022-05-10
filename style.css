@@ -14,8 +14,8 @@ body {
     border: 10px solid rgb(56, 19, 87);
     border-radius: 10px;
     outline: 2px solid black;
-    height: 360px;
-    width: 242px;
+    height: 460px;
+    width: 302px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -45,7 +45,7 @@ body {
 }
 
 .vanish {
-    height: 30px;
+    height: 40px;
     display: flex;
     justify-content: space-around;
 }
@@ -54,7 +54,7 @@ body {
     border: 2px solid green;
     border-radius: 3px;
     background-color: black;
-    width: 116px;
+    width: 146px;
     margin-right: 5px;
     margin-left: 5px;
     display: flex;
@@ -63,8 +63,8 @@ body {
 }
 
 .keys {
-    height: 240px;
-    width: 240px;
+    height: 300px;
+    width: 300px;
     display: flex;
     flex-wrap: wrap;
 }
@@ -73,8 +73,8 @@ body {
     border: 2px solid green;
     border-radius: 3px;
     background-color: black;
-    height: 46px;
-    width: 46px;
+    height: 61px;
+    width: 61px;
     margin: 5px;
     display: flex;
     justify-content: center;
